@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
 import { supabase } from './supabaseClient';
 
-export default function Login() {
+interface LoginProps {
+  onSwitchToSignUp: () => void;
+}
+
+export default function Login({ onSwitchToSignUp }: LoginProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Supabase에게 로그인 검사 요청하기
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
       alert(`로그인 실패: ${error.message}`);
@@ -27,27 +26,16 @@ export default function Login() {
       <h2>로그인</h2>
       <form onSubmit={handleLogin}>
         <div style={{ marginBottom: '10px' }}>
-          <input 
-            type="email" 
-            placeholder="이메일 입력"
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
-            required 
-            style={{ width: '100%', padding: '10px', boxSizing: 'border-box' }}
-          />
+          <input type="email" placeholder="이메일 입력" value={email} onChange={(e) => setEmail(e.target.value)} required style={{ width: '100%', padding: '10px', boxSizing: 'border-box' }} />
         </div>
         <div style={{ marginBottom: '10px' }}>
-          <input 
-            type="password" 
-            placeholder="비밀번호 입력"
-            value={password} 
-            onChange={(e) => setPassword(e.target.value)} 
-            required 
-            style={{ width: '100%', padding: '10px', boxSizing: 'border-box' }}
-          />
+          <input type="password" placeholder="비밀번호 입력" value={password} onChange={(e) => setPassword(e.target.value)} required style={{ width: '100%', padding: '10px', boxSizing: 'border-box' }} />
         </div>
-        <button type="submit" style={{ width: '100%', padding: '10px', backgroundColor: '#4CAF50', color: 'white', border: 'none', cursor: 'pointer' }}>
+        <button type="submit" style={{ width: '100%', padding: '10px', backgroundColor: '#4CAF50', color: 'white', border: 'none', cursor: 'pointer', marginBottom: '8px' }}>
           로그인하기
+        </button>
+        <button type="button" onClick={onSwitchToSignUp} style={{ width: '100%', padding: '10px', backgroundColor: '#e74c3c', color: 'white', border: 'none', cursor: 'pointer' }}>
+          회원가입 하러가기 ➡️
         </button>
       </form>
     </div>
