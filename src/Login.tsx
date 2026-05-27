@@ -1,23 +1,21 @@
 import React, { useState } from 'react';
 import { supabase } from './supabaseClient';
+import { useNavigate } from 'react-router-dom';
 
-interface LoginProps {
-  onSwitchToSignUp: () => void;
-}
-
-export default function Login({ onSwitchToSignUp }: LoginProps) {
+export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
       alert(`로그인 실패: ${error.message}`);
     } else {
       alert('로그인 성공했습니다!');
-      console.log(data);
+      navigate('/main');
     }
   };
 
@@ -34,7 +32,7 @@ export default function Login({ onSwitchToSignUp }: LoginProps) {
         <button type="submit" style={{ width: '100%', padding: '10px', backgroundColor: '#4CAF50', color: 'white', border: 'none', cursor: 'pointer', marginBottom: '8px' }}>
           로그인하기
         </button>
-        <button type="button" onClick={onSwitchToSignUp} style={{ width: '100%', padding: '10px', backgroundColor: '#e74c3c', color: 'white', border: 'none', cursor: 'pointer' }}>
+        <button type="button" onClick={() => navigate('/signup')} style={{ width: '100%', padding: '10px', backgroundColor: '#e74c3c', color: 'white', border: 'none', cursor: 'pointer' }}>
           회원가입 하러가기 ➡️
         </button>
       </form>
