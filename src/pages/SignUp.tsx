@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { supabase } from './supabaseClient';
+import { supabase } from '../services/supabaseClient';
 import { useNavigate } from 'react-router-dom';
 
 export default function SignUp() {
@@ -24,7 +24,7 @@ export default function SignUp() {
     } else {
       alert('자동 로그인까지 완벽하게 성공했습니다! 🎉');
       console.log('로그인된 유저 UUID:', loginData.user?.id);
-      navigate('/main');
+      navigate('/setup-profile');
     }
   };
 

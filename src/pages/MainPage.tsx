@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../services/supabaseClient';
 import './MainPage.css';
 
 const groups = [
@@ -31,6 +32,27 @@ export default function MainPage() {
   const [joinMsg, setJoinMsg] = useState('');
   const [joinSuccess, setJoinSuccess] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [nickname, setNickname] = useState('');
+  const [avatar, setAvatar] = useState('🐱');
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData.user) { navigate('/'); return; }
+
+      const { data } = await supabase
+        .from('profiles')
+        .select('nickname, avatar')
+        .eq('id', userData.user.id)
+        .single();
+
+      if (data) {
+        setNickname(data.nickname ?? '');
+        setAvatar(data.avatar ?? '🐱');
+      }
+    };
+    fetchProfile();
+  }, []);
 
   const createGroup = () => {
     if (!groupName.trim()) return;
@@ -70,16 +92,16 @@ export default function MainPage() {
           ))}
         </div>
 
-        <div className="sidebar-profile">
+        <div className="sidebar-profile" onClick={() => navigate('/profile')} style={{ cursor: 'pointer' }}>
           <div className="profile-avatar">
-            <div className="avatar-circle">🐱</div>
+            <div className="avatar-circle">{avatar}</div>
             <div className="online-dot" />
           </div>
           <div className="profile-info">
-            <div className="profile-name">김지민</div>
+            <div className="profile-name">{nickname || '...'}</div>
             <div className="profile-status">온라인</div>
           </div>
-          <button className="logout-btn" onClick={() => navigate('/')} title="로그아웃">🚪</button>
+          <button className="logout-btn" onClick={(e) => { e.stopPropagation(); navigate('/'); }} title="로그아웃">🚪</button>
         </div>
       </div>
 
@@ -136,7 +158,7 @@ export default function MainPage() {
         <div className="section-label">내 그룹 목록</div>
         <div className="rooms-grid">
           {groups.map((g, i) => (
-            <div key={i} className="room-card">
+            <div key={i} className="room-card" onClick={() => navigate(`/room/${i}`)} style={{ cursor: 'pointer' }}>
               <span className="room-icon">{g.icon}</span>
               <div className="room-name">{g.name}</div>
               <div className="room-meta">팀원 {g.members.length}명</div>
