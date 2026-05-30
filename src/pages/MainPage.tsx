@@ -43,7 +43,7 @@ export default function MainPage() {
 
       const { data: profile } = await supabase
         .from('profiles').select('nickname, avatar')
-        .eq('id', userData.user.id).single();
+        .eq('id', userData.user.id).maybeSingle();
       if (profile) { setNickname(profile.nickname ?? ''); setAvatar(profile.avatar ?? '🐱'); }
 
       fetchGroups(userData.user.id);
@@ -68,9 +68,9 @@ export default function MainPage() {
     const { data, error } = await supabase
       .from('groups')
       .insert({ name: groupName, invite_code: code, created_by: userId })
-      .select().single();
+      .select().maybeSingle();
 
-    if (error) { alert(`생성 실패: ${error.message}`); return; }
+    if (error || !data) { alert(`생성 실패: ${error?.message}`); return; }
 
     await supabase.from('group_members').insert({ group_id: data.id, user_id: userId });
     setGroupName('');
@@ -82,10 +82,10 @@ export default function MainPage() {
     const v = inviteInput.trim().toUpperCase();
     if (!v) { setJoinMsg('코드를 입력해주세요'); setJoinSuccess(false); return; }
 
-    const { data: group, error } = await supabase
-      .from('groups').select('id, name').eq('invite_code', v).single();
+    const { data: group } = await supabase
+      .from('groups').select('id, name').eq('invite_code', v).maybeSingle();
 
-    if (error || !group) { setJoinMsg('그룹을 찾을 수 없어요'); setJoinSuccess(false); return; }
+    if (!group) { setJoinMsg('그룹을 찾을 수 없어요'); setJoinSuccess(false); return; }
 
     const { error: joinError } = await supabase
       .from('group_members').insert({ group_id: group.id, user_id: userId });
