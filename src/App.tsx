@@ -7,6 +7,9 @@ import CreateRoom from './pages/CreateRoom'
 import Room from './pages/Room'
 import Profile from './pages/Profile'
 import SetupProfile from './pages/SetupProfile';
+import GroupPage from './pages/GroupPage'
+import GroupSettings from './pages/GroupSettings'
+
 
 export default function App() {
   return (
@@ -19,6 +22,8 @@ export default function App() {
         <Route path="/room/:id" element={<Room />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/setup-profile" element={<SetupProfile />} />
+        <Route path="/group/:id" element={<GroupPage />} />
+        <Route path="/group/:id/settings" element={<GroupSettings />} />
       </Routes>
     </BrowserRouter>
   )
