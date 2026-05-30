@@ -220,8 +220,13 @@
   border-radius: 8px;
   font-size: 13px;
   background: #fafafa;
+  color: #000000;
   margin-bottom: 10px;
   box-sizing: border-box;
+}
+
+.action-input::placeholder {
+  color: #999999;
 }
 
 .action-input.uppercase {
